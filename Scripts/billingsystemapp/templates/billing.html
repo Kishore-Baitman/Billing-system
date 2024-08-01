@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load custom_filters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Billing</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f8f8;
+            padding-top: 56px; /* For fixed navbar */
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .navbar-nav .nav-item .nav-link {
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+        .navbar-nav .nav-item .nav-link:hover {
+            color: #000000;
+        }
+        .navbar {
+            background: linear-gradient(45deg, #1d2b64, #1d2b64);
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 30px;
+        }
+        h1 {
+            color: #343a40;
+        }
+        h2, h3 {
+            color: #343a40;
+        }
+        .form-control {
+            border-radius: 20px;
+        }
+        .btn {
+            border-radius: 20px;
+        }
+        table {
+            margin-top: 20px;
+        }
+        th {
+            background-color: #343a40;
+            color: #fff;
+        }
+        td {
+            background-color: #fff;
+        }
+        .btn-success {
+            margin-top: 20px;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+        
+        .btn-secondary {
+            margin-left: 10px;
+            margin-top: 24px;
+            color: white;
+        }
+        .price-label {
+            font-weight: bold;
+            margin-right: 5px; /* Space after Rs */
+           }
+        
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div class="container-fluid">
+                <a id="logo" class="navbar-brand" href="{% url 'billing' %}">Billingsystem</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav" style="padding-left: 350px;">
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'adduser' %}">Add User</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'addcategory' %}">Add Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'addproduct' %}">Add Product</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'user_list' %}">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'category_list' %}">Category</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'addcustomer' %}">Add Customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'billing' %}">Billing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'product' %}">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'customers' %}">Customers</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <br>
+    <br>
+    <div class="container">
+        <h1>Select product</h1>
+        <div class="form-container">
+            <form method="post" class="form-inline w-100" id="addProductForm">
+                {% csrf_token %}
+                <div class="input-group w-100">
+                    <input type="text" id="searchProduct" class="form-control" placeholder="Search and select product">
+                    <select name="product_id" id="productSelect" class="form-control" required>
+                        <option value="">Select Product</option>
+                        {% for product in products %}
+                        <option value="{{ product.product_id }}">{{ product.product_name }} - Rs{{ product.price }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="number" name="quantity" class="form-control" placeholder="Quantity" min="1" required>
+                    <div class="input-group-append">
+                        <button type="submit" name="add_product" class="btn btn-primary">Add Product</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <br>
+        <p style="color: rgb(138, 45, 45);">{{ msg }}</p>
+
+        <h2>Cart</h2>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Discounted Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for product_id, item in cart.items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td><span class="price-label">Rs</span>{{ item.original_price }}</td>
+                    <td><span class="price-label">Rs</span>{{ item.discounted_price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td><span class="price-label">Rs</span>{{ item.discounted_price|multiply:item.quantity }}</td>
+                    <td>
+                        <form method="post" class="form-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product_id }}">
+                            <button type="submit" name="remove_product" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table> 
+
+       
+    <h3>Total Price: <span class="price-label">Rs</span>{{ total_price }}</h3>
+    <div class="form-container">
+        <form method="post" id="submitBillForm" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" name="submit_bill" class="btn btn-success">Submit Bill</button>
+        </form>
+        <form action="{% url 'billing' %}" method="get" class="new-transaction-btn" style="display: inline;">
+            <button type="submit" class="btn btn-secondary">New Transaction</button>
+        </form>
+    </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchProduct').on('input', function() {
+                var searchValue = $(this).val().toLowerCase();
+                $('#productSelect option').each(function() {
+                    var text = $(this).text().toLowerCase();
+                    $(this).toggle(text.indexOf(searchValue) > -1);
+                });
+            });
+
+            const logo = document.getElementById('logo');
+            logo.addEventListener('click', function () {
+                location.reload();
+            });
+
+            const submitBillForm = document.getElementById('submitBillForm');
+            if (submitBillForm) {
+                submitBillForm.addEventListener('submit', function() {
+                    setTimeout(function() {
+                        submitBillForm.reset(); // Clear form inputs
+                    }, 100); // Adjust the delay if needed
+                });
+            }
+        });
+    </script>
+</body>
+</html>

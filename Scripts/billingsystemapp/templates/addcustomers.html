@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load custom_filters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Add Customer</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f8f8;
+            padding-top: 56px; /* For fixed navbar */
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .navbar-nav .nav-item .nav-link {
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+        .navbar-nav .nav-item .nav-link:hover {
+            color: #000000;
+        }
+        .navbar {
+            background: linear-gradient(45deg, #1d2b64, #1d2b64);
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 30px;
+        }
+        h1 {
+            color: #343a40;
+        }
+        .form-control {
+            border-radius: 20px;
+        }
+        .btn {
+            border-radius: 20px;
+        }
+        .alert {
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div class="container-fluid">
+                <a id="logo" class="navbar-brand" href="{% url 'billing' %}">Billingsystem</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav" style="padding-left: 350px;">
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'adduser' %}">Add User</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'addcategory' %}">Add Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'addproduct' %}">Add Product</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'user_list' %}">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'category_list' %}">Category</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'addcustomer' %}">Add Customer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'billing' %}">Billing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'product' %}">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'customers' %}">Customers</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <h1 class="mb-4">Add a New Customer</h1>
+        <form method="post" action="{% url 'addcustomer' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="customer_name">Customer Name:</label>
+                <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" class="form-control" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="purchase_date">Purchase Date:</label>
+                <input type="date" class="form-control" id="purchase_date" name="purchase_date" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Customer</button>
+        </form>
+        {% if msg %}
+        <div class="alert alert-info mt-3" role="alert">
+            {{ msg }}
+        </div>
+        {% endif %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
