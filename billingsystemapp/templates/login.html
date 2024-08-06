@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1d2b64;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            margin: 0;
+            flex-direction: column;
+            font-weight: bold;
+        }
+        .title {
+            font-size: 75px;
+            margin-bottom: 20px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            color: #ffffff;
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+        
+        .login-box {
+            width: 350px;
+            padding: 40px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .login-box h2 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .login-box label {
+            display: block;
+            margin-bottom: 5px;
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            text-align: left;
+            font-weight: bold;
+            color: #000000;
+        }
+        .login-box input[type="text"],
+        .login-box input[type="password"] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 5px 0 20px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            box-sizing: border-box;
+        }
+        .login-box input[type="submit"] {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #1d2b64;
+            color: #fff;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .login-box input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .messages .danger {
+            color: #ff0000;
+        }
+        .form-control::placeholder {
+            color: #aaa;
+        }
+        .form-control:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px 0 #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="title center">Billing-System</div>
+    <div class="login-box">
+        <h2>Login</h2>
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+            <input type="submit" class="btn btn-success btn-block" value="Login">
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
