@@ -11,8 +11,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f8f8;
-            margin: 0;
-            padding-top: 56px; /* Adjust based on navbar height */
+            padding-top: 56px; /* For fixed navbar */
         }
         .navbar {
             background: linear-gradient(45deg, #1d2b64, #1d2b64);
@@ -48,7 +47,7 @@
         }
         .container {
             max-width: 900px;
-            margin-top: 70px; /* Adjust based on navbar height */
+            margin-top: 30px;
         }
         h1 {
             color: #343a40;
@@ -57,7 +56,7 @@
             margin-top: 20px;
         }
         th {
-            background-color: #1d2b64;
+            background-color: #343a40;
             color: #fff;
         }
         td {
@@ -69,79 +68,72 @@
         .btn-danger {
             border-radius: 20px;
         }
-        footer {
-            background-color: #343a40;
-            color: #fff;
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a id="logo" class="navbar-brand" href="{% url 'billing' %}">Billingsystem</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    {% if user.is_superuser %}
+    <div class="nav">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a id="logo" class="navbar-brand" href="{% url 'billing' %}">Billingsystem</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/adduser/' %}active{% endif %}" href="{% url 'adduser' %}">Add User</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/addcategory/' %}active{% endif %}" href="{% url 'addcategory' %}">Add Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/addproduct/' %}active{% endif %}" href="{% url 'addproduct' %}">Add Product</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/user_list/' %}active{% endif %}" href="{% url 'user_list' %}">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/category_list/' %}active{% endif %}" href="{% url 'category_list' %}">Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/sales_summary/' %}active{% endif %}" href="{% url 'sales_summary' %}">Sales Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/product_stock/' %}active{% endif %}" href="{% url 'product_stock' %}">Stocks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/profit_loss/' %}active{% endif %}" href="{% url 'profit_loss' %}">Profit/Loss</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/adduser/' %}active{% endif %}" href="{% url 'adduser' %}">Add User</a>
+                            <a class="nav-link {% if request.path == '/addcustomer/' %}active{% endif %}" href="{% url 'addcustomer' %}">Add Customer</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/addcategory/' %}active{% endif %}" href="{% url 'addcategory' %}">Add Category</a>
+                            <a class="nav-link {% if request.path == '/billing/' %}active{% endif %}" href="{% url 'billing' %}">Billing</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/addproduct/' %}active{% endif %}" href="{% url 'addproduct' %}">Add Product</a>
+                            <a class="nav-link {% if request.path == '/product/' %}active{% endif %}" href="{% url 'product' %}">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/user_list/' %}active{% endif %}" href="{% url 'user_list' %}">Users</a>
+                            <a class="nav-link {% if request.path == '/customers/' %}active{% endif %}" href="{% url 'customers' %}">Customers</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/category_list/' %}active{% endif %}" href="{% url 'category_list' %}">Category</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/sales_summary/' %}active{% endif %}" href="{% url 'sales_summary' %}">Sales Summary</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/product_stock/' %}active{% endif %}" href="{% url 'product_stock' %}">Stocks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/profit_loss/' %}active{% endif %}" href="{% url 'profit_loss' %}">Profit/Loss</a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/addcustomer/' %}active{% endif %}" href="{% url 'addcustomer' %}">Add Customer</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/billing/' %}active{% endif %}" href="{% url 'billing' %}">Billing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/product/' %}active{% endif %}" href="{% url 'product' %}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/customers/' %}active{% endif %}" href="{% url 'customers' %}">Customers</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ml-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                    {% endif %}
-                </ul>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
     <div class="container mt-5">
         <h1 class="mb-4">Category List</h1>
         <table class="table table-bordered">
@@ -165,7 +157,7 @@
             </tbody>
         </table>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>

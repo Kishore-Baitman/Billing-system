@@ -9,10 +9,9 @@ from django.contrib import messages
 from django.db.models import Q,Sum
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from reportlab.pdfgen import canvas as pdf_canvas
 from reportlab.lib import colors
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,Paragraph,Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle,Paragraph,Spacer,Image
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 import io,uuid
 from django.utils import timezone
@@ -99,7 +98,7 @@ def billing(request):
             quantity = request.POST.get('quantity')
             product = get_object_or_404(Product, pk=product_id)
             cart = request.session.get('cart', {})
-
+            
             if product.quantity == 0:
                 return render(request, 'billing.html', {
                     'msg': f'{product.product_name} is out of stock.',
@@ -133,7 +132,7 @@ def billing(request):
                     cart[product_id] = {
                         'name': product.product_name,
                         'original_price': round_to_two_decimal_places(float(product.price)),
-                        'discounted_price': discounted_price,
+                        'discounted_price': round_to_two_decimal_places(discounted_price),
                         'quantity': quantity
                     }
                 request.session['cart'] = cart
@@ -211,7 +210,7 @@ def billing(request):
     return render(request, 'billing.html', {
         'products': Product.objects.all(),
         'cart': cart,
-        'total_price': total_price,
+        'total_price': round_to_two_decimal_places(total_price),
         'customers': Customer.objects.all(),
     })
 
@@ -219,6 +218,7 @@ def billing(request):
 
 def round_to_two_decimal_places(value):
     return round(value, 2)
+
 
 def generate_pdf_bill(sale_number, cart, purchasetime, customer_name, payment_method):
     response = HttpResponse(content_type='application/pdf')
@@ -229,33 +229,44 @@ def generate_pdf_bill(sale_number, cart, purchasetime, customer_name, payment_me
 
     styles = getSampleStyleSheet()
     title_style = styles['Title']
-    company_title_style = ParagraphStyle(name='CompanyTitle', fontSize=18, alignment=1)
+    company_title_style = ParagraphStyle(name='CompanyTitle', fontSize=22, alignment=1)
     add_style = ParagraphStyle(name='add_style', fontSize=14, alignment=1)
     normal_style = styles['Normal']
     Left_style = ParagraphStyle(name='LeftStyle', alignment=0, leftIndent=.01)
 
+    logo_path = 'C:/Users/Kishore/Desktop/billingsys/env/Scripts/billingsystemapp/templates/static/images/png2.png'  # Adjust path as per your project structure
+    logo_width = 150  # Adjust the width as needed
+    logo_height = 100
+    logo = Image(logo_path, width=logo_width, height=logo_height)
 
-    # Add company name
-    company_name = "WA Enterprise"
+    # Add company name and address
+    company_name = "W A ENTERPRISE"
     company_title = Paragraph(company_name, title_style)
-    elements.append(company_title)
-    elements.append(Spacer(1, 5))
     address = Paragraph("Your trusted destination for cutting-edge electronics and unbeatable deals.", add_style)
-    elements.append(address)
-    elements.append(Spacer(1, 10))
-    
-    
-    #elements.append(Paragraph("Phone:9633477499", phone_style))
-    #elements.append(Paragraph("Email:waenterprise@gmail.com", phone_style))
-    #elements.append(Paragraph("Website:waenterprise.com", phone_style))
-    #elements.append(Paragraph("Pincode:695305",normal_style)) 
-    #elements.append(Paragraph("Address:Near Attingal KSRTC bus stand,Attingal,Trivandrum,Kerala.", normal_style))
 
-
+    # Create a table to hold the company name, address, and logo in one row
+    data = [
+        [
+            Table([
+                [company_title],
+                [address]
+            ], colWidths=[300]),  # Adjust the width as needed
+            logo
+        ]
+    ]
+    table = Table(data, colWidths=[400, 100])  # Adjust colWidths as needed
+    table.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Align the content to the top
+    ]))
+    
+    elements.append(table)
+    
+    elements.append(Spacer(1, 12))
+    #elements.append(Paragraph("GstIN:08AALCR2857A1ZD", Left_style))
     data = [
         [
             
-            Paragraph("Address: Near Attingal KSRTC bus stand, Attingal, Trivandrum, Kerala, Pincode: 695305.", normal_style),
+            Paragraph("Address: Near Attingal KSRTC bus stand, Attingal, Trivandrum, Kerala, Pincode: 695305.  GstIN:08AALCR2857A1ZD", normal_style),
             Spacer(1, 10),  # Spacer to push the next item to the right
             Paragraph("Phone: 9633477499 Email:waenterprise@gmail.com  Website:waenterprise.com"  , normal_style),
 
@@ -268,16 +279,15 @@ def generate_pdf_bill(sale_number, cart, purchasetime, customer_name, payment_me
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ]))
     elements.append(table)
-    
-    elements.append(Spacer(1, 12))
-    elements.append(Paragraph("GstIN:08AALCR2857A1ZD", Left_style))
 
     elements.append(Paragraph(f"Purchase Time: {purchasetime.strftime('%Y-%m-%d %H:%M:%S')}", normal_style))
+    elements.append(Paragraph(f"Customer Name: {customer_name}", normal_style))
+    elements.append(Paragraph(f"Payment Method: {payment_method}", normal_style))
     elements.append(Spacer(1, 12))
     # Add main title
     main_title = Paragraph("Purchase Invoice", company_title_style)
     elements.append(main_title)
-    elements.append(Spacer(1, 12))
+    elements.append(Spacer(1, 20))
 
     # Table data
     data = [
@@ -306,8 +316,6 @@ def generate_pdf_bill(sale_number, cart, purchasetime, customer_name, payment_me
 
     # Add customer and payment details
     elements.append(Spacer(1, 12))
-    elements.append(Paragraph(f"Customer Name: {customer_name}", normal_style))
-    elements.append(Paragraph(f"Payment Method: {payment_method}", normal_style))
 
     term_title_style = ParagraphStyle(name='CompanyTitle', fontSize=10)
     terms = Paragraph("**Terms and Conditions**", term_title_style)
@@ -346,11 +354,9 @@ def generate_pdf_bill(sale_number, cart, purchasetime, customer_name, payment_me
 
     # Build the document with the onPage callback to draw the border and lines
     doc.build(elements, onFirstPage=lambda canvas, doc: [draw_border(canvas, doc), draw_lines(canvas, doc)],
-                  onLaterPages=lambda canvas, doc: [draw_border(canvas, doc), draw_lines(canvas, doc)])
+              onLaterPages=draw_border)
 
     return response
-
-
 
 def product_list(request):
     now = timezone.now().date()
@@ -595,28 +601,54 @@ def product_stock_view(request):
     return render(request, 'product_stock.html', context)
 
 
-
 def profit_loss_view(request):
     billings = Billing.objects.select_related('product_id')
+    total_profit_loss = 0
     profit_loss_details = []
-    total_profit_or_loss = 0
 
     for billing in billings:
         stock_item = stock.objects.get(product_name=billing.product_id)
         profit_or_loss = (billing.price - stock_item.price) * billing.quantity
-        total_profit_or_loss += profit_or_loss
-
+        total_profit_loss += profit_or_loss
         profit_loss_details.append({
             'product': billing.product_id,
             'billing_price': billing.price,
             'stock_price': stock_item.price,
-            'profit_or_loss': profit_or_loss,
+            'profit_or_loss': profit_or_loss
         })
 
     context = {
         'profit_loss_details': profit_loss_details,
-        'total_profit_or_loss': total_profit_or_loss,
+        'profit_loss': total_profit_loss
+    }
+    
+    return render(request, 'profit_loss.html', context)
+
+
+def profit_loss_today(request):
+    today = datetime.now().date()
+    billings = Billing.objects.filter(purchasetime__date=today).select_related('product_id')
+    todays_profit_loss = 0
+    profit_loss_details = []
+
+    for billing in billings:
+        stock_item = stock.objects.get(product_name=billing.product_id)
+        profit_or_loss = (billing.price - stock_item.price) * billing.quantity
+        todays_profit_loss += profit_or_loss
+        profit_loss_details.append({
+            'product': billing.product_id,
+            'billing_price': billing.price,
+            'stock_price': stock_item.price,
+            'profit_or_loss': profit_or_loss
+        })
+
+    context = {
+        'profit_loss_details': profit_loss_details,
+        'profit_loss': todays_profit_loss
     }
 
     return render(request, 'profit_loss.html', context)
+
+
+
 

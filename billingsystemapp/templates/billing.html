@@ -12,7 +12,7 @@
             font-family: 'Poppins', sans-serif;
             background-color: #f8f8f8;
             padding-top: 56px; /* For fixed navbar */
-            overflow-y: scroll; /* Always show scrollbar */
+            overflow-y:scroll;
         }
         .navbar {
             background: linear-gradient(45deg, #1d2b64, #1d2b64);
@@ -63,7 +63,7 @@
             margin-top: 20px;
         }
         th {
-            background-color: #1d2b64;
+            background-color: #343a40;
             color: #fff;
         }
         td {
@@ -78,8 +78,7 @@
         .btn-secondary {
             margin-left: 10px;
             margin-top: 20px;
-            background-color: #dc3545;
-            color: rgb(255, 255, 255);
+            color: white;
         }
         .price-label {
             font-weight: bold;
@@ -89,7 +88,6 @@
             display: block;
             margin-bottom: 10px;
         }
-
     </style>
 </head>
 <body>
@@ -178,28 +176,6 @@
                 </div>
             </form>
         </div>
-        <form method="POST" action="{% url 'billing' %}" id="billingForm">
-            {% csrf_token %}
-            <div>
-                <label for="customer_name">Customer Name:</label>
-                <select id="customer_name" name="customer_name" required>
-                    {% for customer in customers %}
-                        <option value="{{ customer.customer_id }}">{{ customer.customer_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div>
-                <label for="payment_method">Payment Method:</label>
-                <select id="payment_method" name="payment_method" required>
-                    <option value="Credit card">Credit Card</option>
-                    <option value="Debit card">Debit Card</option>
-                    <option value="Cash">Cash</option>
-                    <option value="UPI">Upi</option>
-                    <option value="Bank">Bank</option>
-                </select>
-            </div>
-        </form>
         <h2>Cart</h2>
         <table class="table table-bordered">
             <thead>
@@ -231,11 +207,35 @@
                 {% endfor %}
             </tbody>
         </table> 
-        <h3>Total Price: <span class="price-label">Rs</span>{{ total_price }}</h3>
-        <div class="form-container">
-            <button type="submit" form="billingForm" name="submit_bill" class="btn btn-success">Submit Bill</button>
-            <button type="submit" form="billingForm" name="create_new_transaction" class="btn btn-secondary">New Transaction</button>
-        </div>
+        <h2>Customer and Payment method:</h2>
+        <form method="POST" action="{% url 'billing' %}" id="billingForm">
+            {% csrf_token %}
+            <div>
+                <label for="customer_name">Customer Name:</label>
+                <select id="customer_name" name="customer_name" required>
+                    {% for customer in customers %}
+                        <option value="{{ customer.customer_id }}">{{ customer.customer_name }}</option>
+                    {% endfor %}
+                </select>
+                <a href="{% url 'addcustomer' %}">Create new customer</a>
+            </div>
+            
+            <div>
+                <label for="payment_method">Payment Method:</label>
+                <select id="payment_method" name="payment_method" required>
+                    <option value="Credit card">Credit Card</option>
+                    <option value="Debit card">Debit Card</option>
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">Upi</option>
+                    <option value="Bank">Bank</option>
+                </select>
+            </div>
+            <h3>Total Price: <span class="price-label">Rs</span>{{ total_price }}</h3>
+            <div class="form-container">
+                <button type="submit" name="submit_bill" class="btn btn-success">Submit Bill</button>
+                <button type="submit" name="create_new_transaction" class="btn btn-secondary">New Transaction</button>
+            </div>
+        </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

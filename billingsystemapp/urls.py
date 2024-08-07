@@ -28,4 +28,5 @@ urlpatterns = [
     path('sales_this_week/', views.sales_this_week, name='sales_this_week'),
     path('product_stock/', views.product_stock_view, name='product_stock'),
     path('profit_loss/', views.profit_loss_view, name='profit_loss'),
+    path('profit_loss_today/', views.profit_loss_today, name='profit_loss_today'),
 ]

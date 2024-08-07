@@ -132,13 +132,26 @@
 
     <div class="container mt-5">
         <h1 class="mb-4">Profit or Loss Analysis</h1>
+
+        <div class="d-flex mb-4">
+            <form method="post" action="{% url 'profit_loss_today' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary mr-2">Today's Profit/Loss</button>
+            </form>
+            <form method="post" action="{% url 'profit_loss' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary mr-2">All Profit/Loss</button>
+            </form>
+        </div>
+
         <div class="mb-4">
-            <h3>Total Profit/Loss: 
-                <span class="{% if total_profit_or_loss >= 0 %}profit{% else %}loss{% endif %}">
-                    {{ total_profit_or_loss }}
+            <h3>Profit/Loss: 
+                <span class="{% if profit_loss >= 0 %}profit{% else %}loss{% endif %}">
+                    {{ profit_loss }}
                 </span>
             </h3>
         </div>
+
         <table class="table table-bordered">
             <thead>
                 <tr>

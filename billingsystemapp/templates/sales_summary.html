@@ -66,7 +66,7 @@
         .btn {
             border-radius: 20px;
         }
-        .btn-outline-primary, .btn-primary {
+        .btn-outline-primary, .btn-primary, .btn-secondary {
             border-radius: 20px;
         }
         .d-flex {
@@ -82,74 +82,76 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a id="logo" class="navbar-brand" href="{% url 'billing' %}">Billingsystem</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    {% if user.is_superuser %}
+    <div class="nav">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a id="logo" class="navbar-brand" href="{% url 'billing' %}">Billingsystem</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/adduser/' %}active{% endif %}" href="{% url 'adduser' %}">Add User</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/addcategory/' %}active{% endif %}" href="{% url 'addcategory' %}">Add Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/addproduct/' %}active{% endif %}" href="{% url 'addproduct' %}">Add Product</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/user_list/' %}active{% endif %}" href="{% url 'user_list' %}">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/category_list/' %}active{% endif %}" href="{% url 'category_list' %}">Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/sales_summary/' %}active{% endif %}" href="{% url 'sales_summary' %}">Sales Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/product_stock/' %}active{% endif %}" href="{% url 'product_stock' %}">Stocks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/profit_loss/' %}active{% endif %}" href="{% url 'profit_loss' %}">Profit/Loss</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/adduser/' %}active{% endif %}" href="{% url 'adduser' %}">Add User</a>
+                            <a class="nav-link {% if request.path == '/addcustomer/' %}active{% endif %}" href="{% url 'addcustomer' %}">Add Customer</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/addcategory/' %}active{% endif %}" href="{% url 'addcategory' %}">Add Category</a>
+                            <a class="nav-link {% if request.path == '/billing/' %}active{% endif %}" href="{% url 'billing' %}">Billing</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/addproduct/' %}active{% endif %}" href="{% url 'addproduct' %}">Add Product</a>
+                            <a class="nav-link {% if request.path == '/product/' %}active{% endif %}" href="{% url 'product' %}">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/user_list/' %}active{% endif %}" href="{% url 'user_list' %}">Users</a>
+                            <a class="nav-link {% if request.path == '/customers/' %}active{% endif %}" href="{% url 'customers' %}">Customers</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/category_list/' %}active{% endif %}" href="{% url 'category_list' %}">Category</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/sales_summary/' %}active{% endif %}" href="{% url 'sales_summary' %}">Sales Summary</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/product_stock/' %}active{% endif %}" href="{% url 'product_stock' %}">Stocks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/profit_loss/' %}active{% endif %}" href="{% url 'profit_loss' %}">Profit/Loss</a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/addcustomer/' %}active{% endif %}" href="{% url 'addcustomer' %}">Add Customer</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/billing/' %}active{% endif %}" href="{% url 'billing' %}">Billing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/product/' %}active{% endif %}" href="{% url 'product' %}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/customers/' %}active{% endif %}" href="{% url 'customers' %}">Customers</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ml-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                    {% endif %}
-                </ul>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
     <div class="container mt-4">
         <h1 class="mb-4">Sales Summary</h1>
         <div class="d-flex justify-content-between mb-4">
             <div>
                 <a href="{% url 'sales_today' %}" class="btn btn-primary">Today's Sales</a>
                 <a href="{% url 'sales_this_week' %}" class="btn btn-primary">This Week's Sales</a>
-                <a href="{% url 'sales_summary' %}" class="btn btn-primary">All Sales</a>
+                <a href="{% url 'sales_summary' %}" class="btn btn-secondary">All Sales</a>
             </div>
         </div>
         <table class="table table-bordered">
