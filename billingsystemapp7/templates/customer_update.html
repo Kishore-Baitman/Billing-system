@@ -1,0 +1,37 @@
+<!-- update_customer.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Customer</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4 mb-4">Update Customer</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="customer_name">Customer Name</label>
+                <input type="text" class="form-control" id="customer_name" name="customer_name" value="{{ customer.customer_name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" class="form-control" id="phone" name="phone" value="{{ customer.phone }}" required>
+            </div>
+            <div class="form-group">
+                <label for="purchase_date">Purchase Date</label>
+                <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="{{ customer.purchase_date|date:'Y-m-d' }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Customer</button>
+            <a class="btn btn-secondary" href="{% url 'customers' %}">Cancel</a>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
